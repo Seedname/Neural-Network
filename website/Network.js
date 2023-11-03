@@ -1,5 +1,5 @@
 function sigmoid(n) {
-  return 1/(1-exp(-n));
+  return 1/(1+exp(-n));
 }
 
 class Network{
@@ -32,6 +32,7 @@ class Network{
 
       let z = Matrix.add(Matrix.dot(weight, activation), bias);
       activation = Matrix.map(z, sigmoid);
+      // print(activation);
     }
     
     return activation;

@@ -1,7 +1,3 @@
-function func(n) {
-  return 1/(1-exp(-n));
-}
-
 class Matrix {
   constructor(rows, cols) {
     this.rows = rows;
@@ -68,11 +64,12 @@ class Matrix {
     }
   }
 
-  static map(that, func) {
-    let result = new Matrix(that.rows, that.cols);
-    for(let i = 0; i < that.rows; i++) {
-      for(let j = 0; j < that.cols; j++) {
-        result.data[i][j] = func(that.data[i][j]);
+  static map(matrix, func) {
+    let result = new Matrix(matrix.rows, matrix.cols);
+    for(let i = 0; i < matrix.rows; i++) {
+      for(let j = 0; j < matrix.cols; j++) {
+        // print(func(matrix.data[i][j]) > 1);
+        result.data[i][j] = func(matrix.data[i][j]);
       }
     }
     return result;
