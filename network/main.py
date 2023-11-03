@@ -141,11 +141,11 @@ class Network:
 
                 prev_accuracy = accuracy
 
-        f = open('weights.txt', 'w')
+        f = open('network/weights.txt', 'w')
         f.write(str(self.weights))
         f.close()
 
-        f = open('biases.txt', 'w')
+        f = open('network/biases.txt', 'w')
         f.write(str(self.biases))
         f.close()
         length = len(y)
@@ -158,7 +158,7 @@ class Network:
 
 if __name__ == "__main__":
     rows = []
-    with open('mnist_train.csv') as file:
+    with open('network/mnist_train.csv') as file:
         csvreader = csv.reader(file)
         for row in csvreader:
             rows.append(row)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     input_values = [np.asmatrix(list(map(lambda x : x / 255, map(int, row[1:])))).T for row in rows]
 
     rows = []
-    with open('mnist_test.csv') as file:
+    with open('network/mnist_test.csv') as file:
         csvreader = csv.reader(file)
         for row in csvreader:
             rows.append(row)
