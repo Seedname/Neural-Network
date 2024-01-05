@@ -81,27 +81,6 @@ class Network:
                 cost_gradient_weights = [np.zeros(weight.shape) for weight in self.weights]
                 cost_gradient_biases  = [np.zeros(bias.shape) for bias in self.biases]
 
-                # output = mp.Queue()
-                # processes = [mp.Process(target=self.backpropagation, args=(output, input, target)) for input, target in mini_batch]
-
-                # # Run processes
-                # for p in processes:
-                #     p.start()
-                #     p.join()
-
-                # # Exit the completed processes
-                # for p in processes:
-                    
-
-                # Get process results from the output queue
-                # results = [output.get() for p in processes]
-
-                # for result in results:
-                #     cost_gradient_weight, cost_gradient_bias = result
-                #     for j in range(len(self.weights)):
-                #         cost_gradient_weights[j] += cost_gradient_weight[j]
-                #         cost_gradient_biases[j]  += cost_gradient_bias[j]
-
                 for input, target in mini_batch:
                     cost_gradient_weight, cost_gradient_bias = self.backpropagation(input, target)
                     for j in range(len(self.weights)):
@@ -133,8 +112,8 @@ class Network:
                     elif np.argmax(result) == np.argmax(target):
                         correct += 1
 
-                mse /= (len(test_data))
-                mse = np.mean(mse)
+                # mse /= (len(test_data))
+                mse = np.sqrt(np.mean(mse))
 
                 print(f"Loss: {mse}")
                 y2.append(mse)
@@ -198,79 +177,35 @@ def benchmark():
     neural_network = Network([2, 3, 2])
     neural_network.train(input_values, target_values, epochs=3000,  mini_batch_size=2000, learning_rate=0.8, patience=np.inf, test_data=test_data)
 
-def make_linear_regression(sets=1, points=1000, scale=10):
-    inputs = []
-    outputs = []
-
-    for _ in range(sets):
-        noise1 = list(np.random.randn(1, points))
-
-        m = np.random.randint(-100, 100)
-        b = np.random.randint(-100, 100)
-
-        pts = [[x, m * x + b + noise1[0][x] * scale] for x in range(points)]
-        
-        s_x = 0
-        s_y = 0
-        s_xx = 0
-        s_xy = 0
-
-        p = []
-
-        for x, y in pts:
-            s_x += x
-            s_y += y
-            s_xx += x*x
-            s_xy += x*y
-            p.append(x)
-            p.append(y)
-        
-        m = (points*s_xy - s_x*s_y)/(points*s_xx - s_x*s_x)
-        b = (s_y - m * s_x) / points
-        
-        input = np.asmatrix(p)
-        output = np.asmatrix([m, b])
-
-        inputs.append(input.T)
-        outputs.append(output)
-
-    return (inputs, outputs)
-
+use_mnist = False
 
 if __name__ == "__main__":
-    rows = []
-    with open('network/mnist_train.csv') as file:
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            rows.append(row)
+    if use_mnist:
+        rows = []
+        print("Reading Training Data...")
+        with open('network/mnist_train.csv') as file:
+            csvreader = csv.reader(file)
+            for row in csvreader:
+                rows.append(row)
 
-    target_values = [np.asmatrix([1 if i == int(row[0]) else 0 for i in range(10)]) for row in rows]
-    input_values = [np.asmatrix(list(map(lambda x : x / 255, map(int, row[1:])))).T for row in rows]
+        target_values = [np.asmatrix([1 if i == int(row[0]) else 0 for i in range(10)]) for row in rows]
+        input_values = [np.asmatrix(list(map(lambda x : x / 255, map(int, row[1:])))).T for row in rows]
 
-    rows = []
-    with open('network/mnist_test.csv') as file:
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            rows.append(row)
+        rows = []
+        print("Reading Testing Data...")
+        with open('network/mnist_test.csv') as file:
+            csvreader = csv.reader(file)
+            for row in csvreader:
+                rows.append(row)
 
-    target_values_test = [np.asmatrix([1 if i == int(row[0]) else 0 for i in range(10)]) for row in rows]
-    input_values_test = [np.asmatrix(list(map(lambda x : x / 255, map(int, row[1:])))).T for row in rows]
+        target_values_test = [np.asmatrix([1 if i == int(row[0]) else 0 for i in range(10)]) for row in rows]
+        input_values_test = [np.asmatrix(list(map(lambda x : x / 255, map(int, row[1:])))).T for row in rows]
 
-    test_data = list(zip(input_values_test, target_values_test))
-    neural_network = Network([784, 32, 10])
-    neural_network.train(input_values, target_values, epochs=50,  mini_batch_size=16, learning_rate=0.1, patience=5, test_data=test_data)
-
-
-    # input_values, target_values = make_linear_regression(100, 500, 10)
-    # input_values_test, target_values_test = make_linear_regression(100, 500, 5)
-
-    # test_data = list(zip(input_values_test, target_values_test))
-
-    # neural_network = Network([1000, 32, 2])
-    # neural_network.train(input_values, target_values, epochs=50,  mini_batch_size=16, learning_rate=0.8, patience=5, padding=2, test_data=test_data)
-    
-
-    # benchmark()
+        test_data = list(zip(input_values_test, target_values_test))
+        neural_network = Network([784, 32, 32, 10])
+        neural_network.train(input_values, target_values, epochs=50,  mini_batch_size=16, learning_rate=0.1, patience=5, test_data=test_data)
+    else:
+        benchmark()
 
 
     
